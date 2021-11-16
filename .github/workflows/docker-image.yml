@@ -19,7 +19,17 @@ jobs:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-    - name: Build the 5.6 Docker image
+    - name: Build 8.0 image
       run: docker build ./docker --file ./docker/Dockerfile --tag dud380/mysql-backup-restore:8.0
+    - name: Push 8.0 image
+      run: docker push ${{DOCKER_USER}}/mysql-backup-restore:8.0
+    - name: Build 5.6 image
+      run: docker build ./docker --file ./docker/Dockerfile.MySQL56 --tag dud380/mysql-backup-restore:5.6
+    - name: Push 5.6 image
+      run: docker push ${{DOCKER_USER}}/mysql-backup-restore:5.6
+    - name: Build 5.7 image
+      run: docker build ./docker --file ./docker/Dockerfile.MySQL57 --tag dud380/mysql-backup-restore:5.7
+    - name: Push 5.7 image
+      run: docker push ${{DOCKER_USER}}/mysql-backup-restore:5.7
       
   
