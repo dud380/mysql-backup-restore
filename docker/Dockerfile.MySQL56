@@ -1,0 +1,41 @@
+FROM mysql:5.6
+
+ENV DUMP_USER ''
+ENV DUMP_PASSWD ''
+ENV DUMP_HOST ''
+ENV DUMP_NAME ''
+ENV DUMP_DATABASES ''
+ENV DUMP_LOCATION '/dump/init.sql.gz'
+ENV AZ_STORAGE_SAS ''
+ENV ENC_PASSWD ''
+ENV AZCOPY_LOG_LOCATION '/tmp/azcopy'
+ENV AZCOPY_JOB_PLAN_LOCATION 'tmp/azcopy'
+ENV AWS_ACCESS_KEY_ID ''
+ENV AWS_SECRET_ACCESS_KEY ''
+ENV AWS_DEFAULT_REGION ''
+ENV AWS_S3_BUCKET_NAME ''
+ENV AZURE_ENVIRONMENT ''
+ENV MYSQL_ALLOW_EMPTY_PASSWORD true
+
+RUN apt-get update -y && \
+apt-get install -y curl unzip && \
+curl -L -o azcopy.tar.gz https://azcopyvnext.azureedge.net/release20201211/azcopy_linux_amd64_10.8.0.tar.gz &&\
+tar -xf azcopy.tar.gz --strip-components=1 &&\
+mv azcopy /usr/local/bin &&\
+chmod +x /usr/local/bin/azcopy &&\
+rm azcopy.tar.gz &&\
+mkdir /tmp/azcopy &&\
+chmod 777 /tmp/azcopy &&\
+chmod 777 /docker-entrypoint-initdb.d/ &&\
+mkdir /dump &&\
+chmod 777 /dump
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.1.37.zip" -o "awscliv2.zip" && \
+unzip awscliv2.zip &&\
+./aws/install
+
+COPY BaltimoreCyberTrustRoot.crt.pem /opt/ssl/
+COPY DigiCertGlobalRootCA.crt.pem /opt/ssl/
+COPY mysqld.cnf /etc/mysql/mysql.conf.d/
+
+COPY docker-entrypoint56.sh /usr/local/bin/docker-entrypoint.sh

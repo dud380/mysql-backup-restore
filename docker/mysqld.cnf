@@ -1,0 +1,14 @@
+[mysqld]
+skip-host-cache
+skip-name-resolve
+max_allowed_packet=256M # to mitigate "server has gone away"
+innodb_doublewrite = 0 # probably safe for large file dump loads
+innodb_buffer_pool_size = 1600M  # 80% of total RAM 2GB
+innodb_log_file_size = 400M  # 25% of innodb_buffer_pool_size
+performance_schema = off # reduce memory
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+datadir         = /dump/mysql
+log-error      = /dump/error.log
+# Disabling symbolic-links is recommended to prevent assorted security risks
+#symbolic-links=0
